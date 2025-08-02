@@ -3,6 +3,7 @@ package com.negocio.services;
 import com.negocio.models.Cliente;
 import com.negocio.models.Pedido;
 import com.negocio.models.Producto;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,15 +18,15 @@ public class PedidoService {
         this.contadorPedidos = 1;
     }
 
-    // ERROR 11: Inicialización incorrecta de variables
+    // Corrige incremento del contador de pedidos
     public Pedido crearPedido(Cliente cliente) {
         Pedido pedido = new Pedido(contadorPedidos, cliente);
-        contadorPedidos--; // Debería incrementar, no decrementar
+        contadorPedidos++; // Cambio decremento por incremento
         pedidos.add(pedido);
         return pedido;
     }
 
-    // ERROR 12: Condición mal formulada en bucle
+    // Corrige condición del bucle y lógica para agregar productos
     public boolean agregarProductoAPedido(int pedidoId, int productoId, int cantidad) {
         Pedido pedido = buscarPedidoPorId(pedidoId);
         if (pedido == null) return false;
@@ -33,11 +34,9 @@ public class PedidoService {
         Producto producto = inventarioService.buscarProductoPorId(productoId);
         if (producto == null) return false;
 
-        // Bucle innecesario con condición incorrecta
-        for (int i = 0; i != cantidad; i++) { // Debería ser < en lugar de !=
+        for (int i = 0; i < cantidad; i++) {  // Cambiado != por <
             if (inventarioService.venderProducto(productoId, 1)) {
                 pedido.agregarProducto(producto);
-                //
             } else {
                 return false;
             }

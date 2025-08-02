@@ -1,28 +1,82 @@
+
 package com.negocio.models;
 
-// ERROR 1: Atributos públicos (Mala práctica de encapsulamiento)
 public class Producto {
-    public int id;
-    public String nombre;
-    public double precio;
-    public int stock;
+    private int id;
+    private String nombre;
+    private double precio;
+    private int stock;
 
-    // ERROR 2: Constructor sin validaciones
+    // ===== INICIO MEJORA #6: Validar precio positivo en constructor =====
     public Producto(int id, String nombre, double precio, int stock) {
+        if (precio <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor que cero.");
+        }
+        if (stock < 0) {
+            throw new IllegalArgumentException("El stock no puede ser negativo.");
+        }
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
-        this.stock = stock; // No valida si el stock es negativo
+        this.stock = stock;
+    }
+// ===== FIN MEJORA #6 =====
+
+
+
+
+    // Getters y setters
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
-    // ERROR 3: Método que permite stock negativo
+    public String getNombre() {
+        return nombre;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+    // ===== INICIO MEJORA #6: Validar precio positivo en setter =====
+    public void setPrecio(double precio) {
+        if (precio <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor que cero.");
+        }
+        this.precio = precio;
+    }
+    // ===== FIN MEJORA #6 =====
+
+    public int getStock() {
+        return stock;
+    }
+
+    // ===== INICIO MEJORA #5: Validar que el stock nunca sea negativo =====
     public void reducirStock(int cantidad) {
-        this.stock = this.stock - cantidad; // No verifica si hay suficiente stock
+        if (cantidad > stock) {
+            throw new IllegalArgumentException("No hay suficiente stock disponible.");
+        }
+        this.stock -= cantidad;
     }
+    // ===== FIN MEJORA #5 =====
+    // ===== INICIO MEJORA #5 (setter) =====
+    public void setStock(int stock) {
+    if (stock < 0) {
+        throw new IllegalArgumentException("El stock no puede ser negativo.");
+        }
+    this.stock = stock;
+    }
+    // ===== FIN MEJORA #5 =====
 
-    // ERROR 4: Método con lógica incorrecta
+
+    // Método que verifica si hay stock suficiente (cantidad o más)
     public boolean hayStock(int cantidad) {
-        return stock > cantidad; // Debería ser >= para permitir exactamente la cantidad
+        return stock >= cantidad;
     }
 
     @Override

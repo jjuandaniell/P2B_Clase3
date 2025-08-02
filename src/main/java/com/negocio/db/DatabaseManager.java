@@ -20,34 +20,27 @@ public class DatabaseManager {
     private static void inicializarTablas() {
         try (Statement stmt = connection.createStatement()) {
             // Crear tabla productos
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS productos (
-                    id INTEGER PRIMARY KEY,
-                    nombre TEXT NOT NULL,
-                    precio REAL NOT NULL,
-                    stock INTEGER NOT NULL
-                )
-            """);
+            stmt.execute("CREATE TABLE IF NOT EXISTS productos (" +
+                    "id INTEGER PRIMARY KEY, " +
+                    "nombre TEXT NOT NULL, " +
+                    "precio REAL NOT NULL, " +
+                    "stock INTEGER NOT NULL)");
 
             // Crear tabla clientes
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS clientes (
-                    id INTEGER PRIMARY KEY,
-                    nombre TEXT NOT NULL,
-                    telefono TEXT
-                )
-            """);
+            stmt.execute("CREATE TABLE IF NOT EXISTS clientes (" +
+                    "id INTEGER PRIMARY KEY, " +
+                    "nombre TEXT NOT NULL, " +
+                    "telefono TEXT)");
 
-            // Crear tabla pedidos
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS pedidos (
-                    id INTEGER PRIMARY KEY,
-                    cliente_id INTEGER,
-                    fecha TEXT,
-                    total REAL,
-                    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
-                )
-            """);
+            // ===== INICIO MEJORA #2: Modificar estructura de tabla pedidos para guardar fecha y hora =====
+            stmt.execute("CREATE TABLE IF NOT EXISTS pedidos (" +
+                    "id INTEGER PRIMARY KEY, " +
+                    "cliente_id INTEGER, " +
+                    "fecha_hora TEXT, " + // <-- nuevo campo
+                    "total REAL, " +
+                    "FOREIGN KEY (cliente_id) REFERENCES clientes(id))");
+// ===== FIN MEJORA #2 =====
+
 
         } catch (SQLException e) {
             System.err.println("Error al inicializar tablas: " + e.getMessage());
@@ -58,6 +51,7 @@ public class DatabaseManager {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
+                connection = null; // Buen práctica para liberar referencia
             }
         } catch (SQLException e) {
             System.err.println("Error al cerrar conexión: " + e.getMessage());
